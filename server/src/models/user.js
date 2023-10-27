@@ -30,6 +30,7 @@ module.exports = (sequelize, Sequelize) => {
   user.associate = (models) => {
     user.belongsTo(models.branch, { foreignKey: "branchId" });
     user.belongsTo(models.role, { foreignKey: "roleId" });
+    user.hasMany(models.event, { foreignKey: "userId" });
   };
 
   return user;

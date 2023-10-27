@@ -21,12 +21,13 @@ const verifyToken = (req, res, next) => {
   }
 };
 
-const checkAdmin = async (req, res, next) => {
+const checkRoles = (req, res, next) => {
   try {
     if (req.user.roleId == 2) {
       next();
+    } else {
+      return res.status(500).send("Unauthorized");
     }
-    return res.status(500).send("Unauthorized");
   } catch (err) {
     return res.status(500).send("Unauthorized");
   }
@@ -34,5 +35,5 @@ const checkAdmin = async (req, res, next) => {
 
 module.exports = {
   verifyToken,
-  checkAdmin,
+  checkRoles,
 };

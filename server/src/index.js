@@ -24,9 +24,11 @@ app.use(
 );
 const branchRouter = require("./routes/branchRouter");
 const authRouter = require("./routes/authRouter");
+const eventRouter = require("./routes/eventRouter");
 
 app.use("/branchs", branchRouter);
 app.use("/auth", authRouter);
+app.use("/event", eventRouter);
 
 app.listen(PORT, (req, res) => {
   console.log(`Server started on port ${PORT}`);

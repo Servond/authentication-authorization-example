@@ -27,13 +27,14 @@ const loginService = async (email, password) => {
     if (!check) throw new Error("Email doesnt exist");
 
     const isValid = await bcrypt.compare(password, check.password);
-    if (!isValid) throw new Error("Email or password is incorrect");
+    if (!isValid) throw new Error("Password is incorrect");
 
     let payload = {
       id: check.id,
       email: check.email,
       username: check.username,
-      isAdmin: check.roleId == 2 ? true : false,
+      branchId: check.branchId,
+      roleId: check.roleId,
     };
 
     const token = jwt.sign(payload, process.env.JWT_SECRET_KEY, {
