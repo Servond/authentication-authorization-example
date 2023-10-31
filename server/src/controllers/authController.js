@@ -6,9 +6,13 @@ const {
 
 const registerController = async (req, res) => {
   try {
-    const { email, username, password, branchId } = req.body;
-
-    const result = await registerService(email, username, password, branchId);
+    const { email, username, password } = req.body;
+    const result = await registerService(
+      email,
+      username,
+      password,
+      req.file?.filename
+    );
 
     return res.status(200).json({
       message: "Success",

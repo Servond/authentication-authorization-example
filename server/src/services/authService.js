@@ -1,9 +1,14 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
+const path = require("path");
+const handlebars = require("handlebars");
+const fs = require("fs");
+
 const { registerQuery, keepLoginQuery } = require("../queries/authQuery");
 const { findUserQuery } = require("../queries/userQuery");
+const transporter = require("../utils/nodemailer");
 
-const registerService = async (email, username, password, branchId) => {
+const registerService = async (email, username, password, avatar) => {
   try {
     const check = await findUserQuery({ email, username });
 
@@ -13,7 +18,38 @@ const registerService = async (email, username, password, branchId) => {
 
     const hashPassword = await bcrypt.hash(password, salt);
 
-    const res = await registerQuery(email, username, hashPassword, branchId);
+    let payload = {
+      email: email,
+    };
+
+    const token = jwt.sign(payload, process.env.JWT_SECRET_KEY, {
+      expiresIn: "1hr",
+    });
+
+    const res = await registerQuery(
+      email,
+      username,
+      hashPassword,
+      avatar,
+      token
+    );
+
+    const temp = await fs.readFileSync(
+      path.join(__dirname, "../template", "registration-template.html"),
+      "utf-8"
+    );
+
+    const activationLink = `${process.env.FE_BASE_URL}/verify?token=${token}`;
+
+    const tempCompile = await handlebars.compile(temp);
+    const tempResult = tempCompile({ email: res.email, link: activationLink });
+
+    await transporter.sendMail({
+      from: process.env.GMAIL_USER,
+      to: res.email,
+      subject: "Activation",
+      html: tempResult,
+    });
 
     return res;
   } catch (err) {
@@ -35,6 +71,7 @@ const loginService = async (email, password) => {
       username: check.username,
       branchId: check.branchId,
       roleId: check.roleId,
+      avatar: check.avatar,
     };
 
     const token = jwt.sign(payload, process.env.JWT_SECRET_KEY, {

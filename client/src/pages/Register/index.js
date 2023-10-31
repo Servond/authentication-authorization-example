@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   Box,
   Button,
@@ -13,14 +14,21 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 function Register() {
+  const [fieldImage, setFieldImage] = useState(null);
   const navigate = useNavigate();
+
   const register = async (email, username, password) => {
     try {
-      const { data } = await axios.post("http://localhost:8080/auth/register", {
-        email,
-        username,
-        password,
-      });
+      let formData = new FormData();
+      formData.append("email", email);
+      formData.append("username", username);
+      formData.append("password", password);
+      formData.append("avatar", fieldImage);
+
+      const { data } = await axios.post(
+        `${process.env.REACT_APP_API_BASE_URL}/auth/register`,
+        formData
+      );
       alert(data?.message);
       navigate("/login");
     } catch (err) {
@@ -33,6 +41,7 @@ function Register() {
       email: "",
       username: "",
       password: "",
+      image: null,
     },
     onSubmit: (values) => {
       register(values.email, values.username, values.password);
@@ -43,6 +52,19 @@ function Register() {
     <Box w="full" p={8}>
       <Heading>Register</Heading>
       <form onSubmit={formik.handleSubmit}>
+        <FormLabel>Profile Picture: </FormLabel>
+        <FormControl mb={5}>
+          <InputGroup>
+            <Input
+              type="file"
+              name="image"
+              size="lg"
+              onChange={(event) => {
+                setFieldImage(event.currentTarget.files[0]);
+              }}
+            />
+          </InputGroup>
+        </FormControl>
         <FormLabel>Email: </FormLabel>
         <FormControl
           isInvalid={formik.touched.email && formik.errors.email}

@@ -1,4 +1,4 @@
-import { Box, Heading, Button } from "@chakra-ui/react";
+import { Box, Heading, Button, Image } from "@chakra-ui/react";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
@@ -13,7 +13,15 @@ const Home = () => {
       <Box>
         <Heading>Welcome {isLogin ? user?.username : "Guest"}</Heading>
         {isLogin ? (
-          <Button onClick={() => dispatch(logoutSuccess())}>Logout</Button>
+          <Box>
+            <Image
+              height="120px"
+              width="120px"
+              src={`${process.env.REACT_APP_IMAGE_URL}/avatar/${user?.avatar}`}
+              alt="profile pict"
+            />
+            <Button onClick={() => dispatch(logoutSuccess())}>Logout</Button>
+          </Box>
         ) : (
           <Box>
             <Button onClick={() => navigate("/login")}>Login</Button>

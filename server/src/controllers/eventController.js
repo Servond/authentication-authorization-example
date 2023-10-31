@@ -7,8 +7,7 @@ const createEventController = async (req, res) => {
   try {
     const { eventName } = req.body;
     const { id } = req.user;
-
-    const result = await createEventService(eventName, id);
+    const result = await createEventService(eventName, id, req.file?.filename);
 
     return res.status(200).json({
       message: "Success",

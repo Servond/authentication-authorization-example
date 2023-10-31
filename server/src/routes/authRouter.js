@@ -8,9 +8,10 @@ const {
 } = require("../controllers/authController");
 
 const { verifyToken } = require("../middleware/auth");
+const { uploadAvatarFile } = require("../middleware/multer");
 
 router.post("/login", loginController);
-router.post("/register", registerController);
+router.post("/register", uploadAvatarFile, registerController);
 router.get("/keep-login", verifyToken, keepLoginController);
 
 module.exports = router;

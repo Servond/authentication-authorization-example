@@ -20,6 +20,12 @@ module.exports = (sequelize, Sequelize) => {
       roleId: {
         type: Sequelize.INTEGER,
       },
+      avatar: {
+        type: Sequelize.STRING,
+      },
+      token: {
+        type: Sequelize.STRING,
+      },
     },
     {
       timestamps: false,

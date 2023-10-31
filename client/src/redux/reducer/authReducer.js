@@ -9,6 +9,7 @@ const initialState = {
     username: "",
     branchId: null,
     roleId: null,
+    avatar: "",
   },
   isLogin: false,
 };
@@ -18,7 +19,7 @@ export const AuthReducer = createSlice({
   initialState,
   reducers: {
     setUser: (state, action) => {
-      const { id, email, username, branchId, roleId } = action.payload;
+      const { id, email, username, branchId, roleId, avatar } = action.payload;
 
       state.user = {
         id,
@@ -26,6 +27,7 @@ export const AuthReducer = createSlice({
         username,
         branchId,
         roleId,
+        avatar,
       };
     },
     loginSuccess: (state, action) => {
@@ -44,10 +46,13 @@ export const AuthReducer = createSlice({
 export const login = (email, password) => {
   return async (dispatch) => {
     try {
-      const res = await axios.post("http://localhost:8080/auth/login", {
-        email,
-        password,
-      });
+      const res = await axios.post(
+        `${process.env.REACT_APP_API_BASE_URL}/auth/login`,
+        {
+          email,
+          password,
+        }
+      );
 
       localStorage.setItem("token", res?.data?.data?.token);
       dispatch(setUser(res?.data?.data?.user));
@@ -64,11 +69,14 @@ export const keepLogin = () => {
       const token = localStorage.getItem("token");
 
       if (token) {
-        const res = await axios.get("http://localhost:8080/auth/keep-login", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const res = await axios.get(
+          `${process.env.REACT_APP_API_BASE_URL}/auth/keep-login`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
 
         dispatch(setUser(res?.data?.data));
         dispatch(keepLoginSuccess());
